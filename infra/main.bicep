@@ -38,17 +38,6 @@ module alertRuleGroup './app/alertRuleGroup.bicep' = {
   }
 }
 
-module secondAlert './alerts/secondAlertRule.bicep' = {
-  name: 'secondAlert'
-  scope: rg
-  params: {
-    location: location
-    tags: tags
-    actionGroupId: alertRuleGroup.outputs.id
-    appInsightsId: applicationInsights.outputs.id
-  }
-}
-
 module basicAlert './alerts/basicAlertRule.bicep' = {
   name: 'basicAlert'
   scope: rg
