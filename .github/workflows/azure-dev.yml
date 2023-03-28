@@ -21,12 +21,15 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/azure-dev-cli-apps:latest
+    env:
+      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      AZURE_CREDENTIALS: ${{ vars.AZURE_CREDENTIALS }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: "Output"
-        run: echo "C ${{ vars.AZURE_CLIENT_ID }} T ${{ vars.AZURE_TENANT_ID }}"
-        
+
       - name: Log in with Azure (Federated Credentials)
         if: ${{ env.AZURE_CLIENT_ID != '' }}
         run: |
@@ -38,5 +41,7 @@ jobs:
 
       - name: Azure Dev Provision
         run: azd provision --no-prompt
-
-
+        env:
+          AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+          AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
