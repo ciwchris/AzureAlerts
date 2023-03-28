@@ -31,7 +31,7 @@ exceptions
           '''
           timeAggregation: 'Count'
           operator: 'GreaterThan'
-          threshold: 0
+          threshold: 1
           failingPeriods: {
             numberOfEvaluationPeriods: 1
             minFailingPeriodsToAlert: 1
