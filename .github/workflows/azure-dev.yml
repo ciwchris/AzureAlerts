@@ -25,7 +25,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: "Output"
-        run: echo "C $Env:AZURE_CLIENT_ID T $Env:AZURE_TENANT_ID"
+        run: echo "C $AZURE_CLIENT_ID T $AZURE_TENANT_ID"
         
       - name: Log in with Azure (Federated Credentials)
         if: ${{ env.AZURE_CLIENT_ID != '' }}
