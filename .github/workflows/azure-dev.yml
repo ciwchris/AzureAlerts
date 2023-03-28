@@ -25,7 +25,6 @@ jobs:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      AZURE_CREDENTIALS: ${{ vars.AZURE_CREDENTIALS }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -33,14 +32,14 @@ jobs:
       - name: Log in with Azure (Federated Credentials)
         if: ${{ env.AZURE_CLIENT_ID != '' }}
         run: |
-          azd login --debug `
+          azd login `
             --client-id "$Env:AZURE_CLIENT_ID" `
             --federated-credential-provider "github" `
             --tenant-id "$Env:AZURE_TENANT_ID"
         shell: pwsh
 
       - name: Azure Dev Provision
-        run: azd provision --no-prompt --debug
+        run: azd provision --no-prompt
         env:
           AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
           AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
