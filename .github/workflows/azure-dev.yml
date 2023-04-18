@@ -1,46 +1,42 @@
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - infra/**
-  pull_request:
-    branches:
-      - main
-    paths:
-      - infra/**
+    workflow_dispatch:
+    push:
+        branches:
+            - main
+        paths:
+            - infra/**
 
 # https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
 permissions:
-  id-token: write
-  contents: read
+    id-token: write
+    contents: read
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/azure-dev-cli-apps:latest
-    env:
-      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Log in with Azure (Federated Credentials)
-        if: ${{ env.AZURE_CLIENT_ID != '' }}
-        run: |
-          azd login `
-            --client-id "$Env:AZURE_CLIENT_ID" `
-            --federated-credential-provider "github" `
-            --tenant-id "$Env:AZURE_TENANT_ID"
-        shell: pwsh
-
-      - name: Azure Dev Provision
-        run: azd provision --no-prompt
+    build:
+        runs-on: ubuntu-latest
+        container:
+            image: mcr.microsoft.com/azure-dev-cli-apps:latest
         env:
-          AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
-          AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
-          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+            AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+            AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+            AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+            AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Log in with Azure (Federated Credentials)
+              if: ${{ env.AZURE_CLIENT_ID != '' }}
+              run: |
+                  azd login `
+                    --client-id "$Env:AZURE_CLIENT_ID" `
+                    --federated-credential-provider "github" `
+                    --tenant-id "$Env:AZURE_TENANT_ID"
+              shell: pwsh
+
+            - name: Azure Dev Provision
+              run: azd provision --no-prompt
+              env:
+                  AZURE_ENV_NAME: ${{ secrets.AZURE_ENV_NAME }}
+                  AZURE_LOCATION: ${{ secrets.AZURE_LOCATION }}
+                  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
